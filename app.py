@@ -7,5 +7,5 @@ def hello():
   return "hi"
 
 @app.route("/a")
-def hello():
+def helloo():
   return "haaaaaaaaa"
