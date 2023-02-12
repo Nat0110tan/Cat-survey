@@ -1,41 +1,83 @@
-from flask import Flask
+from flask import *
 from flask_sqlalchemy import SQLAlchemy
-import os
+from flask_migrate import Migrate
+from datetime import datetime
+import json,os
+from collections import defaultdict
+
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL")
+# app.config.from_object(config)
+app.config['SQLALCHEMY_DATABASE_URI']= os.environ.get("DATABASE_URL")
 DATABASE_URL="postgresql://hw_user:TzaO8qnbLogp5M3XwsLwK0EpTz45Z9Mf@dpg-cfht36la499bfu2gfnng-a.oregon-postgres.render.com/hw"
+
 db = SQLAlchemy(app)
-
-class Cat(db.Model):
-  __tablename__ = "cat"
-  id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-  #varchar, null=0
-  name = db.Column(db.String(100), nullable=False)
-  password = db.Column(db.String(100), nullable=False)
-
-@app.route("/cat/update")
-def update_user():
-  catt = Cat.query.filter_by(name="meme").first()
-  # 这里的first返回的是一个user对象而不是query类数组
-  catt.password = "123456" #已经是在这个数据库里面操作了,不用add
-  db.session.commit()
-  return "Successfully changed"
+migrate = Migrate(app, db)
 
 with app.app_context():
-  db.create_all()
+ db.create_all()
 
-@app.route("/")
-def hello():
-  return "hi"
+class Response(db.Model):
+    __tablename__ = "useraccount"
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String(80), nullable=False)
+    gender = db.Column(db.String(10), nullable=False)
+    color = db.Column(db.String(10), nullable=True)
+    cats = db.Column(db.Boolean, nullable=True)
+    reason = db.Column(db.String(500), nullable=True)
+    join_time = db.Column(db.DateTime, default=datetime.now)
 
-@app.route("/add/<string:n>")
-def helloo(n):
-  cat = Cat(name=n,password="123")
-  db.session.add(cat)
-  db.session.commit()
-  return "Successfully added a new cat!"
+@app.route('/')
+def index():
+    return render_template('index.html')
 
+@app.route('/survey', methods=['GET', 'POST'])
+def survey():
+    if request.method == 'POST':
+        name = request.form['name']
+        gender = request.form['gender']
+        color = request.form['color']
+        cats = 'no' in request.form
+        reason = request.form.get('reason', '')
+        join_time = request.form.get('join_time')
+        response = Response(name=name, gender=gender, color=color, cats=cats, reason=reason, join_time=join_time)
+        db.session.add(response)
+        db.session.commit()
+        return render_template('thanks.html')
+    else:
+        return render_template('survey.html')
+
+@app.route('/decline')
+def decline():
+    return render_template('decline.html')
+
+@app.route('/thanks', methods=['POST'])
+def thanks():
+    return render_template('thanks.html')
+
+@app.route('/api/results')
+def get_results():
+    reverse = request.args.get('reverse')
+    if reverse == 'true':
+        responses = Response.query.order_by(Response.id.desc()).all()
+    else:
+        responses = Response.query.all()
+    results = []
+    for response in responses:
+        results.append({
+            'name': response.name,
+            'gender': response.gender,
+            'color': response.color,
+            'cats': response.cats,
+            'reason': response.reason,
+            'join_time': response.join_time
+        })
+    return jsonify(results)
+
+
+@app.route('/admin/summary')
+def summary():
+    return render_template('summary.html')
 
 if __name__ == '__main__':
   app.run()
