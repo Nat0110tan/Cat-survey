@@ -1,83 +1,73 @@
-{%extends "base.html"%}
-{% block content %}
-  <form class="pure-form pure-form-stacked" action="{{ url_for('thanks') }}" method="post">
-    <fieldset>
-      <legend>Welcome! Please answer the following questions:</legend>
-      
-      <div class="pure-g">
-        <label for="year">Expected graduation year:</label>
-        <input id="year" type="text" name="year" required minlength="3">
-        <span class="pure-form-message-inline">This is a required field.</span>
-      </div>
 
-      <label for="question1">Why you are filling the form:</label>
-      <div class="pure-g">
-        <div class="pure-u-2-5">
-          <label for="gender-male" class="pure-radio">
-            <input id="gender-male" type="radio" name="gender" value="male">
-            Male
-          </label>
-        </div>
-
-        <div class="pure-u-2-5">
-          <label for="gender-female" class="pure-radio">
-            <input id="gender-female" type="radio" name="gender" value="female">
-            Female
-          </label>
-        </div>
-
-        <div class="pure-u-1-5">
-          <label for="gender-other" class="pure-radio">
-            <input id="gender-other" type="radio" name="gender" value="other">
-            Other
-          </label>
-        </div>
-      </div>
-
-      <div class="pure-g">
-        <label for="color">Favorite Color:</label>
-        <select id="color" name="color">
-          <option value="red">Red</option>
-          <option value="green">Green</option>
-          <option value="blue">Blue</option>
-        </select>
-      </div>
-
-      <label for="languages">Programming Languages:</label>
-      <div class="pure-g">
-        
-        <div class="pure-checkbox">
-          <input id="python" type="checkbox" name="languages" value="python">
-          <label for="python">Python</label>
-        </div>
-     
-        <div class="pure-checkbox">
-          <input id="javascript" type="checkbox" name="languages" value="javascript">
-          <label for="javascript">JavaScript</label>
-        </div>
-
-        <div class="pure-checkbox">
-          <input id="java" type="checkbox" name="languages" value="java">
-          <label for="java">Java</label>
-        </div>
-      </div>
-      <div id="comments" style="display: none;">
-        <label for="comments">Additional Comments:</label>
-        <textarea id="comments" name="comments"></textarea>
-      </div>
-      
-    </fieldset>
-
-    <input class="pure-button pure-button-primary" type="submit" value="Next">
-  </form>
-  <script>
-    document.getElementById("javascript").addEventListener("change", function() {
-      if (this.checked) {
-        document.getElementById("comments").style.display = "block";
-      } else {
-        document.getElementById("comments").style.display = "none";
-      }
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Survey</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pure/1.0.1/pure-min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pure/1.0.1/grids-responsive-min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+<div class="pure-g">
+    <div class="pure-u-1">
+        <h1>Survey</h1>
+        <p>Please fill out the survey below:</p>
+        <form id="survey-form" method="POST" action="{{ url_for('survey') }}">
+            <fieldset>
+                <div class="pure-g">
+                    <div class="pure-u-1">
+                        <label for="name">Name:</label>
+                        <input id="name" name="name" type="text" required minlength="3">
+                    </div>
+                    <div class="pure-u-1 pure-u-md-1-2">
+                        <label>Gender:</label>
+                        <div class="pure-radio">
+                            <label><input type="radio" name="gender" value="male" required>Male</label>
+                        </div>
+                        <div class="pure-radio">
+                            <label><input type="radio" name="gender" value="female" required>Female</label>
+                        </div>
+                        <div class="pure-radio">
+                            <label><input type="radio" name="gender" value="other" required>Other</label>
+                        </div>
+                    </div>
+                    <div class="pure-u-1 pure-u-md-1-2">
+                        <label for="color">Favorite Color:</label>
+                        <select id="color" name="color">
+                            <option value=""></option>
+                            <option value="red">Red</option>
+                            <option value="green">Green</option>
+                            <option value="blue">Blue</option>
+                        </select>
+                    </div>
+                    <div class="pure-u-1">
+                        <label>Do you like cats?</label>
+                        <div class="pure-checkbox">
+                            <label><input id="cats-yes" type="checkbox" name="cats" value="yes">Yes</label>
+                        </div>
+                    </div>
+                    <div class="pure-u-1 conditional" style="display: none">
+                        <label for="reason">Why do you like cats?</label>
+                        <textarea id="reason" name="reason" cols="30" rows="10"></textarea>
+                    </div>
+                    <div class="pure-u-1">
+                        <button type="submit" class="pure-button pure-button-primary" value="Submit">Submit</button>
+                    </div>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+</div>
+<script>
+    const checkbox = document.querySelector('#cats-yes');
+    const conditional = document.querySelector('.conditional');
+    checkbox.addEventListener('change', () => {
+        if (checkbox.checked) {
+            conditional.style.display = "block";
+        } else {
+            conditional.style.display = "none";
+        }
     });
-  </script>
-
-{% endblock %}
+</script>
+</body>
+</html>

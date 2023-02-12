@@ -1,17 +1,31 @@
-from flask import Flask, render_template, request
-import config
-from exts import db
-from models import UserModel
+from flask import *
+from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from datetime import datetime
+import json,os
+from collections import defaultdict
+
 
 app = Flask(__name__)
-app.config.from_object(config)
-db.init_app(app)
+# app.config.from_object(config)
+app.config['SQLALCHEMY_DATABASE_URI']= os.environ.get("DATABASE_URL")
+DATABASE_URL="postgresql://hw_user:TzaO8qnbLogp5M3XwsLwK0EpTz45Z9Mf@dpg-cfht36la499bfu2gfnng-a.oregon-postgres.render.com/hw"
+
+db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
+with app.app_context():
+ db.create_all()
 
-from flask import Flask, request, render_template, jsonify
-app = Flask(__name__)
+class Response(db.Model):
+    __tablename__ = "useraccount"
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String(80), nullable=False)
+    gender = db.Column(db.String(10), nullable=False)
+    color = db.Column(db.String(10), nullable=True)
+    cats = db.Column(db.Boolean, nullable=True)
+    reason = db.Column(db.String(500), nullable=True)
+    join_time = db.Column(db.DateTime, default=datetime.now)
 
 @app.route('/')
 def index():
@@ -20,16 +34,18 @@ def index():
 @app.route('/survey', methods=['GET', 'POST'])
 def survey():
     if request.method == 'POST':
-        response = {
-            'text_input': request.form['text_input'],
-            'radio_buttons': request.form['radio_buttons'],
-            'select_box': request.form['select_box'],
-            'checkbox': request.form['checkbox'],
-            'textarea': request.form['textarea']
-        }
-  
+        name = request.form['name']
+        gender = request.form['gender']
+        color = request.form['color']
+        cats = 'no' in request.form
+        reason = request.form.get('reason', '')
+        join_time = request.form.get('join_time')
+        response = Response(name=name, gender=gender, color=color, cats=cats, reason=reason, join_time=join_time)
+        db.session.add(response)
+        db.session.commit()
         return render_template('thanks.html')
-    return render_template('survey.html')
+    else:
+        return render_template('survey.html')
 
 @app.route('/decline')
 def decline():
@@ -39,33 +55,29 @@ def decline():
 def thanks():
     return render_template('thanks.html')
 
+@app.route('/api/results')
+def get_results():
+    reverse = request.args.get('reverse')
+    if reverse == 'true':
+        responses = Response.query.order_by(Response.id.desc()).all()
+    else:
+        responses = Response.query.all()
+    results = []
+    for response in responses:
+        results.append({
+            'name': response.name,
+            'gender': response.gender,
+            'color': response.color,
+            'cats': response.cats,
+            'reason': response.reason,
+            'join_time': response.join_time
+        })
+    return jsonify(results)
 
 
-
-# @app.route("/")
-# def index():
-#     return render_template("index.html")
-
-# @app.route("/survey", methods=["GET", "POST"])
-# def survey():
-#     if request.method == "POST":
-#         name = request.form["name"]
-#         radio = request.form["radio"]
-#         select = request.form["select"]
-#         checkbox = "on" if "checkbox" in request.form else None
-#         textarea = request.form["textarea"] if checkbox else None
-#         return render_template("thanks.html", name=name, radio=radio, select=select, checkbox=checkbox, textarea=textarea)
-#     return render_template("survey.html")
-
-# @app.route("/decline")
-# def decline():
-#     return "Thanks anyway!"
-
-# @app.route("/thanks")
-# def thanks():
-#     return render_template("thanks.html")
-
-
+@app.route('/admin/summary')
+def summary():
+    return render_template('summary.html')
 
 if __name__ == '__main__':
   app.run()
