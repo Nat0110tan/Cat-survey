@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from datetime import datetime
 import json,os
-from collections import defaultdict
+
 
 
 app = Flask(__name__)
