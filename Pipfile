@@ -5,12 +5,11 @@ name = "pypi"
 
 [packages]
 flask = "*"
-sqlalchemy = "*"
 flask-sqlalchemy = "*"
 psycopg2-binary = "*"
 flask-migrate = "*"
 gunicorn = "*"
-pandas = "*"
+
 
 [dev-packages]
 
