@@ -1,0 +1,167 @@
+{%extends "base.html"%}
+{% block content %}
+ 
+    <h1>Admin Summary</h1>
+    <h2>Color Count</h2>
+    <canvas id="colorChart" width="400" height="400"></canvas>
+    <h2>Gender Count</h2>
+    <canvas id="genderChart" width="400" height="400"></canvas>
+    <h2>Cats Count</h2>
+    <canvas id="catsChart" width="400" height="400"></canvas>
+    <h2>Reason Answers</h2>
+    <table class="pure-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Gender</th>
+                <th>Favorite Color</th>
+                <th>Cats</th>
+                <th>Reason</th>
+                <th>Join Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for response in responses %}
+                {% if response.id%2==1 %}
+                    <tr class="pure-table-odd">
+                        <td>{{ response.name }}</td>
+                        <td>{{ response.gender }}</td>
+                        <td>{{ response.color }}</td>
+                        <td>{{ response.cats }}</td>
+                        <td>{{ response.reason }}</td>
+                        <td>{{ response.join_time }}</td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td>{{ response.name }}</td>
+                        <td>{{ response.gender }}</td>
+                        <td>{{ response.color }}</td>
+                        <td>{{ response.cats }}</td>
+                        <td>{{ response.reason }}</td>
+                        <td>{{ response.join_time }}</td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+
+    
+    <script>
+      // Color chart
+      var colorCtx = document.getElementById('colorChart').getContext('2d');
+      var colorChart = new Chart(colorCtx, {
+        type: 'bar',
+        data: {
+          labels: {{ color_data['labels'] | tojson }},
+          datasets: [{
+            label: 'Count',
+            data: {{ color_data['data'] | tojson }},
+            backgroundColor: [
+              'rgba(255, 99, 132, 0.2)',
+              'rgba(54, 162, 235, 0.2)',
+              'rgba(255, 206, 86, 0.2)',
+              'rgba(75, 192, 192, 0.2)',
+              'rgba(153, 102, 255, 0.2)',
+              'rgba(255, 159, 64, 0.2)'
+            ],
+            borderColor: [
+              'rgba(255, 99, 132, 1)',
+              'rgba(54, 162, 235, 1)',
+              'rgba(255, 206, 86, 1)',
+              'rgba(75, 192, 192, 1)',
+              'rgba(153, 102, 255, 1)',
+              'rgba(255, 159, 64, 1)'
+            ],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          scales: {
+            yAxes: [{
+              ticks: {
+                beginAtZero: true
+              }
+            }]
+          }
+        }
+      });
+
+      // Gender chart
+      var genderCtx = document.getElementById('genderChart').getContext('2d');
+      var genderChart = new Chart(genderCtx, {
+        type: 'bar',
+        data: {
+          labels: {{ gender_data['labels'] | tojson }},
+          datasets: [{
+            label: 'Count',
+            data: {{ gender_data['data'] | tojson }},
+            backgroundColor: [
+              'rgba(255, 99, 132, 0.2)',
+              'rgba(54, 162, 235, 0.2)',
+              'rgba(255, 206, 86, 0.2)',
+              'rgba(75, 192, 192, 0.2)',
+              'rgba(153, 102, 255, 0.2)',
+              'rgba(255, 159, 64, 0.2)'
+            ],
+            borderColor: [
+              'rgba(255, 99, 132, 1)',
+              'rgba(54, 162, 235, 1)',
+              'rgba(255, 206, 86, 1)',
+              'rgba(75, 192, 192, 1)',
+              'rgba(153, 102, 255, 1)',
+              'rgba(255, 159, 64, 1)'
+            ],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          scales: {
+            yAxes: [{
+              ticks: {
+                beginAtZero: true
+              }
+            }]
+          }
+        }
+      });
+
+      // Cats chart
+      var catsCtx = document.getElementById('catsChart').getContext('2d');
+      var catsChart = new Chart(catsCtx, {
+        type: 'bar',
+        data: {
+          labels: {{ cats_data['labels'] | tojson }},
+          datasets: [{
+            label: 'Count',
+            data: {{ cats_data['data'] | tojson }},
+            backgroundColor: [
+              'rgba(255, 99, 132, 0.2)',
+              'rgba(54, 162, 235, 0.2)',
+              'rgba(255, 206, 86, 0.2)',
+              'rgba(75, 192, 192, 0.2)',
+              'rgba(153, 102, 255, 0.2)',
+              'rgba(255, 159, 64, 0.2)'
+            ],
+            borderColor: [
+              'rgba(255, 99, 132, 1)',
+              'rgba(54, 162, 235, 1)',
+              'rgba(255, 206, 86, 1)',
+              'rgba(75, 192, 192, 1)',
+              'rgba(153, 102, 255, 1)',
+              'rgba(255, 159, 64, 1)'
+            ],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          scales: {
+            yAxes: [{
+              ticks: {
+                beginAtZero: true
+              }
+            }]
+          }
+        }
+      });
+    </script>
+{% endblock %}
