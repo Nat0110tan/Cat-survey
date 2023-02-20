@@ -1,167 +1,213 @@
-{%extends "base.html"%}
+{%extends "base.html"%} 
 {% block content %}
- 
-    <h1>Admin Summary</h1>
+<div class="container" style="margin: auto;width: 1000px;height: 500px;">
+  <h1>Admin Summary</h1>
+  <div id="graph">
     <h2>Color Count</h2>
-    <canvas id="colorChart" width="400" height="400"></canvas>
+    <canvas id="colorChart" width="150" height="100"></canvas>
     <h2>Gender Count</h2>
-    <canvas id="genderChart" width="400" height="400"></canvas>
+    <canvas id="genderChart" width="150" height="100"></canvas>
     <h2>Cats Count</h2>
-    <canvas id="catsChart" width="400" height="400"></canvas>
-    <h2>Reason Answers</h2>
-    <table class="pure-table">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Gender</th>
-                <th>Favorite Color</th>
-                <th>Cats</th>
-                <th>Reason</th>
-                <th>Join Time</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for response in responses %}
-                {% if response.id%2==1 %}
-                    <tr class="pure-table-odd">
-                        <td>{{ response.name }}</td>
-                        <td>{{ response.gender }}</td>
-                        <td>{{ response.color }}</td>
-                        <td>{{ response.cats }}</td>
-                        <td>{{ response.reason }}</td>
-                        <td>{{ response.join_time }}</td>
-                    </tr>
-                {% else %}
-                    <tr>
-                        <td>{{ response.name }}</td>
-                        <td>{{ response.gender }}</td>
-                        <td>{{ response.color }}</td>
-                        <td>{{ response.cats }}</td>
-                        <td>{{ response.reason }}</td>
-                        <td>{{ response.join_time }}</td>
-                    </tr>
-                {% endif %}
-            {% endfor %}
-        </tbody>
+    <canvas id="catsChart" width="150" height="100"></canvas>
+    <h2>Responses Per Day</h2>
+    <canvas id="response-chart" width="150" height="100"></canvas>
+  </div>
+
+  <div class="textTable">
+    <h2>Usernames Chart</h2>
+    <table class="pure-table pure-table-bordered" style="margin:auto">
+      <thead>
+        <tr>Users</tr>
+      </thead>
+      <tbody>
+        {% for name in names %}
+        <tr>
+          <td>{{name}}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
     </table>
+  </div>
 
-    
-    <script>
-      // Color chart
-      var colorCtx = document.getElementById('colorChart').getContext('2d');
-      var colorChart = new Chart(colorCtx, {
-        type: 'bar',
-        data: {
-          labels: {{ color_data['labels'] | tojson }},
-          datasets: [{
-            label: 'Count',
-            data: {{ color_data['data'] | tojson }},
-            backgroundColor: [
-              'rgba(255, 99, 132, 0.2)',
-              'rgba(54, 162, 235, 0.2)',
-              'rgba(255, 206, 86, 0.2)',
-              'rgba(75, 192, 192, 0.2)',
-              'rgba(153, 102, 255, 0.2)',
-              'rgba(255, 159, 64, 0.2)'
-            ],
-            borderColor: [
-              'rgba(255, 99, 132, 1)',
-              'rgba(54, 162, 235, 1)',
-              'rgba(255, 206, 86, 1)',
-              'rgba(75, 192, 192, 1)',
-              'rgba(153, 102, 255, 1)',
-              'rgba(255, 159, 64, 1)'
-            ],
-            borderWidth: 1
-          }]
-        },
-        options: {
-          scales: {
-            yAxes: [{
-              ticks: {
-                beginAtZero: true
-              }
-            }]
-          }
-        }
-      });
 
-      // Gender chart
-      var genderCtx = document.getElementById('genderChart').getContext('2d');
-      var genderChart = new Chart(genderCtx, {
-        type: 'bar',
-        data: {
-          labels: {{ gender_data['labels'] | tojson }},
-          datasets: [{
-            label: 'Count',
-            data: {{ gender_data['data'] | tojson }},
-            backgroundColor: [
-              'rgba(255, 99, 132, 0.2)',
-              'rgba(54, 162, 235, 0.2)',
-              'rgba(255, 206, 86, 0.2)',
-              'rgba(75, 192, 192, 0.2)',
-              'rgba(153, 102, 255, 0.2)',
-              'rgba(255, 159, 64, 0.2)'
-            ],
-            borderColor: [
-              'rgba(255, 99, 132, 1)',
-              'rgba(54, 162, 235, 1)',
-              'rgba(255, 206, 86, 1)',
-              'rgba(75, 192, 192, 1)',
-              'rgba(153, 102, 255, 1)',
-              'rgba(255, 159, 64, 1)'
-            ],
-            borderWidth: 1
-          }]
-        },
-        options: {
-          scales: {
-            yAxes: [{
-              ticks: {
-                beginAtZero: true
-              }
-            }]
-          }
+  <div class="table-wrapper">
+    <h2>Summary Chart</h2>
+    <table class="pure-table">
+      <thead>
+        <tr style="text-align: center">
+          <th>Name</th>
+          <th>Gender</th>
+          <th>Favorite Color</th>
+          <th>Cats</th>
+          <th>Reason</th>
+          <th>Join Time</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for response in responses %} 
+        {% if response.id%2==1 %}
+        <tr class="pure-table-odd">
+          <td>{{ response.name }}</td>
+          <td>{{ response.gender }}</td>
+          <td>{{ response.color }}</td>
+          <td>{{ response.cats }}</td>
+          <td>{{ response.reason }}</td>
+          <td>{{ response.join_time }}</td>
+        </tr>
+        {% else %}
+        <tr>
+          <td>{{ response.name }}</td>
+          <td>{{ response.gender }}</td>
+          <td>{{ response.color }}</td>
+          <td>{{ response.cats }}</td>
+          <td>{{ response.reason }}</td>
+          <td>{{ response.join_time }}</td>
+        </tr>
+        {% endif %} 
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+<script>
+const colorList = {{ color_data['labels'] | tojson }};
+const  colorData = {{ color_data['data'] | tojson }};
+const colorCtx = document.getElementById('colorChart').getContext('2d');
+const colorChart = new Chart(colorCtx, {
+  type: 'bar',
+  data: {
+    labels: colorList,
+    datasets: [{
+      label: 'Color',
+      data: colorData,
+      backgroundColor: [
+        'rgba(255, 99, 132, 0.2)',
+        'rgba(54, 162, 235, 0.2)',
+        'rgba(75, 192, 192, 0.2)',
+      ],
+      borderColor: [
+        'rgba(255, 99, 132, 1)',
+        'rgba(54, 162, 235, 1)',
+        'rgba(75, 192, 192, 1)',
+      ],
+      borderWidth: 1
+    }]
+  },
+  options: {
+    scales: {
+      y: {
+        ticks: {
+          beginAtZero: true
         }
-      });
+      }
+    }
+  }
+});
 
-      // Cats chart
-      var catsCtx = document.getElementById('catsChart').getContext('2d');
-      var catsChart = new Chart(catsCtx, {
-        type: 'bar',
-        data: {
-          labels: {{ cats_data['labels'] | tojson }},
-          datasets: [{
-            label: 'Count',
-            data: {{ cats_data['data'] | tojson }},
-            backgroundColor: [
-              'rgba(255, 99, 132, 0.2)',
-              'rgba(54, 162, 235, 0.2)',
-              'rgba(255, 206, 86, 0.2)',
-              'rgba(75, 192, 192, 0.2)',
-              'rgba(153, 102, 255, 0.2)',
-              'rgba(255, 159, 64, 0.2)'
-            ],
-            borderColor: [
-              'rgba(255, 99, 132, 1)',
-              'rgba(54, 162, 235, 1)',
-              'rgba(255, 206, 86, 1)',
-              'rgba(75, 192, 192, 1)',
-              'rgba(153, 102, 255, 1)',
-              'rgba(255, 159, 64, 1)'
-            ],
-            borderWidth: 1
-          }]
-        },
-        options: {
-          scales: {
-            yAxes: [{
-              ticks: {
-                beginAtZero: true
-              }
-            }]
-          }
+
+const genderList = {{ gender_data['labels'] | tojson }};
+const  genderData = {{ gender_data['data'] | tojson }};
+const genderCtx = document.getElementById('genderChart').getContext('2d');
+const genderChart = new Chart(genderCtx, {
+  type: 'bar',
+  data: {
+    labels: genderList,
+    datasets: [{
+      label: 'Gender',
+      data: genderData,
+      backgroundColor: [
+        'rgba(255, 99, 132, 0.2)',
+        'rgba(54, 162, 235, 0.2)',
+        'rgba(255, 206, 86, 0.2)',
+      ],
+      borderColor: [
+        'rgba(255, 99, 132, 1)',
+        'rgba(54, 162, 235, 1)',
+        'rgba(255, 206, 86, 1)',
+      ],
+      borderWidth: 1
+    }]
+  },
+  options: {
+    scales: {
+      y: {
+        beginAtZero: true
+      }
+    }
+  }
+});
+
+
+const catsList = {{ cats_data['labels'] | tojson }};
+const  catsData = {{ cats_data['data'] | tojson }};
+const catsCtx = document.getElementById('catsChart').getContext('2d');
+const catsChart = new Chart(catsCtx, {
+  type: 'bar',
+  data: {
+    labels: catsList,
+    datasets: [{
+      label: 'Cats',
+      data: catsData,
+      backgroundColor: [
+        'rgba(255, 99, 132, 0.2)',
+        'rgba(54, 162, 235, 0.2)',
+        'rgba(255, 206, 86, 0.2)',
+        'rgba(75, 192, 192, 0.2)',
+      ],
+      borderColor: [
+        'rgba(255, 99, 132, 1)',
+        'rgba(54, 162, 235, 1)',
+        'rgba(255, 206, 86, 1)',
+        'rgba(75, 192, 192, 1)',
+      ],
+      borderWidth: 1
+    }]
+  },
+  options: {
+    scales: {
+      y: {
+        ticks: {
+          beginAtZero: true
         }
-      });
-    </script>
+      }
+    }
+  }
+});
+
+const datesList = {{ dates_list | tojson }};
+const countsList = {{ counts_list | tojson }};
+console.log(datesList);
+console.log(countsList);
+const ctx = document.getElementById('response-chart').getContext('2d');
+const chart = new Chart(ctx, {
+  type: 'line',
+  data: {
+    labels: datesList,
+    datasets: [{
+      label: 'Number of Responses',
+      data: countsList,
+      backgroundColor: 'rgba(255, 99, 132, 1)',
+      borderColor: 'rgba(54, 162, 235, 1)',
+      fill: false,
+    }]
+  },
+  options: {
+    responsive: true,
+    scales: {
+      x: {
+        title: {
+          display: true,
+          text: 'Date'
+        }
+      },
+      y: {
+        title: {
+          display: true,
+          text: 'Counts',
+        },
+      }
+    },
+  },
+});
+</script>
 {% endblock %}

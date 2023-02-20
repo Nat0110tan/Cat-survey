@@ -1,7 +1,6 @@
-
 {%extends "base.html"%}
 {%block css%}
-<link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 {%endblock%}
 {% block content %}
 <div class="pure-g">
@@ -52,15 +51,28 @@
                         </div>
                     </div>
                     <div class="pure-u-1 conditional" style="display: none">
-                        <label for="reason">Why do you like cats?</label>
+                        <div id="reason-label">
+                            <label for="reason">Why do you like cats?</label>
+                        </div>
                         <textarea id="reason" name="reason" cols="30" rows="10"></textarea>
                     </div>
                     <div class="pure-u-1">
-                        <button type="submit" class="pure-button pure-button-primary" value="Submit">Submit</button>
+                        <button type="submit" class="pure-button pure-button-primary" value="Submit">Next</button>
                     </div>
                 </div>
             </fieldset>
         </form>
+    </div>
+</div>
+<div class="pure-g">
+    <div class="pure-u-1-3 gif">
+        <img src="static/images/dobi03.gif" alt="Dobi's gif02">
+    </div>
+    <div class="pure-u-1-3">
+        <img src="static/images/dobi01.png" alt="Dobi is my sweetheart" >
+      </div>
+    <div class="pure-u-1-3 gif">
+        <img src="static/images/dobi03.gif" alt="Dobi's gif02">
     </div>
 </div>
 <script>

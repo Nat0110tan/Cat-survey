@@ -1,0 +1,17 @@
+.pure-control-group {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+.pure-checkbox {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+#reason-label {
+  width: 100%;
+}
+.dobi{
+  width: 200px;
+}
+.gif{
+  background: url(static/images/dobi03.gif) no-repeat;
+}

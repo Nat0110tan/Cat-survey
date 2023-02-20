@@ -4,13 +4,10 @@ from flask_migrate import Migrate
 from datetime import datetime
 import json,os
 
-
-
-
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL")
 DATABASE_URL="postgresql://hw_user:TzaO8qnbLogp5M3XwsLwK0EpTz45Z9Mf@dpg-cfht36la499bfu2gfnng-a.oregon-postgres.render.com/hw"
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL")
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
@@ -59,7 +56,7 @@ def get_results():
     if reverse == 'true':
         responses = Response.query.order_by(Response.id.desc()).all()
     else:
-        responses = Response.query.all()
+        responses = Response.query.order_by(Response.id).all()
     results = []
     for response in responses:
         results.append({
@@ -75,19 +72,19 @@ def get_results():
 
 @app.route('/admin/summary')
 def admin_summary():
-    responses = Response.query.all()
+    responses = Response.query.order_by(Response.id).all()
 
-    # process the responses to generate data for charts
     color_counts = {}
     gender_counts = {}
     cats_counts = {}
-    reason_answers = []
+    names = []
+    dates = []
 
     for response in responses:
         color = response.color
         gender = response.gender
         cats = response.cats.split(',')
-        reason = response.reason
+        name = response.name
 
         if color:
             if color not in color_counts:
@@ -105,10 +102,11 @@ def admin_summary():
                     cats_counts[cat] = 0
                 cats_counts[cat] += 1
 
-        if reason:
-            reason_answers.append(reason)
+        if name:
+            names.append(name)
 
-    # generate data for charts
+        dates.append(response.join_time.date())
+        
     color_data = {
         'labels': list(color_counts.keys()),
         'data': list(color_counts.values())
@@ -121,9 +119,11 @@ def admin_summary():
         'labels': list(cats_counts.keys()),
         'data': list(cats_counts.values())
     }
+    dates_dict = {date:dates.count(date) for date in set(dates)}
+    dates_list = [d.strftime('%Y-%m-%d') for d in sorted(dates_dict.keys())]
+    counts_list = [dates_dict[d] for d in sorted(dates_dict.keys())]
 
-    # pass the processed data to the template
-    return render_template('admin/summary.html',responses=responses,color_data=color_data,gender_data=gender_data,cats_data=cats_data,reason_answers=reason_answers)
+    return render_template('admin/summary.html',responses=responses,color_data=color_data,names=names,gender_data=gender_data,cats_data=cats_data,dates_list=dates_list,counts_list=counts_list)
 
 if __name__ == '__main__':
   app.run()
